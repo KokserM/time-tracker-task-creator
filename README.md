@@ -44,7 +44,10 @@
    
 4. **Select a Project & Create a Task:**
 
-   - Choose a project from the dropdown and click `Create Task`.
+   - Choose a project from the dropdown
+   - Select date for worklog creation
+   - and click `Create Task / Log Time`.
+   - 
    - A toast notification will appear to confirm the task creation or display an error message.
 
 ## Configuration

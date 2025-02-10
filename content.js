@@ -38,7 +38,7 @@
   // ------------------------------------------------------------------------
   // 2) Utility functions for date and time
   // ------------------------------------------------------------------------
-  // Return today's date in "YYYY-MM-DD" format.
+  // Returns today's date in "YYYY-MM-DD" format.
   function getTodayDate() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -47,12 +47,12 @@
     return `${yyyy}-${mm}-${dd}`;
   }
 
-  // Given a date string ("YYYY-MM-DD") and a time string ("HH:mm"), combine them.
+  // Combine a date string ("YYYY-MM-DD") with a time string ("HH:mm")
   function combineDateAndTime(dateStr, timeStr) {
     return `${dateStr}T${timeStr}`;
   }
 
-  // Generate <option> elements for times in 15-minute intervals
+  // Generate a string containing <option> elements for times in 15-minute intervals.
   function generateTimeOptions() {
     let options = "";
     for (let h = 0; h < 24; h++) {
@@ -108,7 +108,6 @@
     });
     modalBox.appendChild(closeButton);
 
-    // Header (logo)
     const headerContainer = document.createElement('div');
     headerContainer.style.width = '100%';
     headerContainer.style.display = 'flex';
@@ -121,12 +120,12 @@
     headerContainer.appendChild(headerImage);
     modalBox.appendChild(headerContainer);
 
-    // Username field
     const userLabel = document.createElement('label');
     userLabel.textContent = 'Username (email):';
     userLabel.style.width = '100%';
     userLabel.style.textAlign = 'center';
     modalBox.appendChild(userLabel);
+
     const usernameInput = document.createElement('input');
     usernameInput.type = 'text';
     usernameInput.style.width = '198px';
@@ -137,12 +136,12 @@
     usernameInput.style.boxSizing = 'border-box';
     modalBox.appendChild(usernameInput);
 
-    // Password field
     const passLabel = document.createElement('label');
     passLabel.textContent = 'Password:';
     passLabel.style.width = '100%';
     passLabel.style.textAlign = 'center';
     modalBox.appendChild(passLabel);
+
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
     passwordInput.style.width = '198px';
@@ -153,7 +152,6 @@
     passwordInput.style.boxSizing = 'border-box';
     modalBox.appendChild(passwordInput);
 
-    // Login button
     const loginButton = document.createElement('button');
     loginButton.textContent = 'Login';
     loginButton.style.background = '#355fac';
@@ -167,11 +165,12 @@
 
     modalOverlay.appendChild(modalBox);
     document.body.appendChild(modalOverlay);
+
     return { modalOverlay, loginButton, usernameInput, passwordInput };
   };
 
   // ------------------------------------------------------------------------
-  // 4) Modal for Create/Log-time (Updated with Date & Time dropdowns)
+  // 4) Modal for Create/Log-time with improved time controls
   // ------------------------------------------------------------------------
   let timetrackerModalContainer = null;
 
@@ -232,9 +231,7 @@
     projectSelect.style.border = '1px solid #ccc';
     projectSelect.style.marginBottom = '10px';
     projectSelect.style.boxSizing = 'border-box';
-    if (existingTask && existingTask.id) {
-      projectSelect.disabled = true;
-    }
+    if (existingTask && existingTask.id) { projectSelect.disabled = true; }
     projects.forEach((proj) => {
       const option = document.createElement('option');
       option.value = JSON.stringify(proj);
@@ -243,7 +240,7 @@
     });
     modalBox.appendChild(projectSelect);
 
-    // New: Date input for selecting the worklog day.
+    // Date input for worklog day
     const dateLabel = document.createElement('label');
     dateLabel.textContent = 'Select Date:';
     dateLabel.style.fontWeight = 'bold';
@@ -254,10 +251,10 @@
     dateInput.type = 'date';
     dateInput.style.width = '100%';
     dateInput.style.marginBottom = '10px';
-    dateInput.value = getTodayDate(); // default to today
+    dateInput.value = getTodayDate();
     modalBox.appendChild(dateInput);
 
-    // New: Dropdowns for start and end times.
+    // Time dropdowns for start and end times (using <select>)
     const timeContainer = document.createElement('div');
     timeContainer.style.display = 'flex';
     timeContainer.style.flexDirection = 'column';
@@ -272,7 +269,7 @@
     startTimeSelect.style.width = '100%';
     startTimeSelect.style.marginBottom = '5px';
     startTimeSelect.innerHTML = generateTimeOptions();
-    // Set default selected value (e.g., "09:00")
+    // Set default value
     startTimeSelect.value = "09:00";
     timeContainer.appendChild(startTimeSelect);
 
@@ -285,11 +282,24 @@
     endTimeSelect.style.width = '100%';
     endTimeSelect.style.marginBottom = '5px';
     endTimeSelect.innerHTML = generateTimeOptions();
-    // Set default selected value (e.g., "10:00")
+    // Set default value
     endTimeSelect.value = "10:00";
     timeContainer.appendChild(endTimeSelect);
 
     modalBox.appendChild(timeContainer);
+
+    // Add a checkbox to let the user decide whether to log time or only create task.
+    const logTimeLabel = document.createElement('label');
+    logTimeLabel.style.marginBottom = '10px';
+    logTimeLabel.style.display = 'flex';
+    logTimeLabel.style.alignItems = 'center';
+    const logTimeCheckbox = document.createElement('input');
+    logTimeCheckbox.type = 'checkbox';
+    logTimeCheckbox.checked = true; // default is to log time
+    logTimeCheckbox.style.marginRight = '5px';
+    logTimeLabel.appendChild(logTimeCheckbox);
+    logTimeLabel.appendChild(document.createTextNode('Log time with task'));
+    modalBox.appendChild(logTimeLabel);
 
     const commentLabel = document.createElement('label');
     commentLabel.textContent = 'Comment (optional):';
@@ -318,54 +328,83 @@
 
     // When the action button is clicked, combine the date and time values.
     actionButton.addEventListener('click', () => {
-      // Get the selected date from dateInput
-      const dateVal = dateInput.value; // format "YYYY-MM-DD"
-      // Get the selected times from the dropdowns
-      const startTimeStr = startTimeSelect.value; // e.g., "09:00"
-      const endTimeStr = endTimeSelect.value;     // e.g., "10:00"
-      if (!dateVal || !startTimeStr || !endTimeStr) {
-        showToast('Please select a date and start/end times.', true);
-        return;
-      }
-      const startVal = combineDateAndTime(dateVal, startTimeStr);
-      const endVal = combineDateAndTime(dateVal, endTimeStr);
-      if (new Date(startVal) >= new Date(endVal)) {
-        showToast('Start time must be before end time.', true);
-        return;
+      const dateVal = dateInput.value; // "YYYY-MM-DD"
+      // If the log time checkbox is unchecked, then we create the task only.
+      const logTime = logTimeCheckbox.checked;
+      let startVal = "";
+      let endVal = "";
+      if (logTime) {
+        const startTimeStr = startTimeSelect.value; // "09:00", etc.
+        const endTimeStr = endTimeSelect.value;
+        if (!startTimeStr || !endTimeStr) {
+          showToast('Please select start and end times or uncheck "Log time with task".', true);
+          return;
+        }
+        startVal = combineDateAndTime(dateVal, startTimeStr);
+        endVal = combineDateAndTime(dateVal, endTimeStr);
+        if (new Date(startVal) >= new Date(endVal)) {
+          showToast('Start time must be before end time.', true);
+          return;
+        }
       }
       const commentVal = commentInput.value.trim();
       const taskName = `${issueKey} - ${issueSummary}`;
-      
-      // If the task already exists, log time directly.
+
+      // If the task already exists, then if logTime is checked, log time; otherwise do nothing.
       if (existingTask && existingTask.id) {
-        console.log('CONTENT: Logging time on existing task...');
-        chrome.runtime.sendMessage({
-          action: 'CREATE_WORKLOG',
-          payload: { task: existingTask, startTime: startVal, endTime: endVal, comment: commentVal, person: user }
-        }, (resp) => {
-          if (!resp) { showToast('No response from background.', true); return; }
-          if (resp.success) { showToast('Time logged successfully!', false); overlay.remove(); }
-          else { showToast(`Error: ${resp.error}`, true); }
-        });
-      } else {
-        const selectedValue = projectSelect.value;
-        if (!selectedValue) { showToast('Please select a project.', true); return; }
-        const selectedProject = JSON.parse(selectedValue);
-        console.log('CONTENT: Creating a new task...');
-        chrome.runtime.sendMessage({
-          action: 'CREATE_TIMETRACKER_TASK',
-          payload: { issueKey, issueSummary, project: selectedProject }
-        }, (createResp) => {
-          if (!createResp) { showToast('No response from background while creating task.', true); return; }
-          if (!createResp.success) { showToast(`Error: ${createResp.error}`, true); return; }
-          showToast('Task created successfully in Timetracker!', false);
+        if (logTime) {
+          console.log('CONTENT: Logging time on existing task...');
+          chrome.runtime.sendMessage({
+            action: 'CREATE_WORKLOG',
+            payload: { task: existingTask, startTime: startVal, endTime: endVal, comment: commentVal, person: user }
+          }, (resp) => {
+            if (!resp) { showToast('No response from background.', true); return; }
+            if (resp.success) { showToast('Time logged successfully!', false); overlay.remove(); }
+            else { showToast(`Error: ${resp.error}`, true); }
+          });
+        } else {
+          showToast('Task already exists; no time logged as per selection.', false);
+          overlay.remove();
+        }
+        return;
+      }
+
+      // If the task does not exist – create it.
+      const selectedValue = projectSelect.value;
+      if (!selectedValue) {
+        showToast('Please select a project.', true);
+        return;
+      }
+      const selectedProject = JSON.parse(selectedValue);
+      console.log('CONTENT: Creating a new task...');
+      chrome.runtime.sendMessage({
+        action: 'CREATE_TIMETRACKER_TASK',
+        payload: { issueKey, issueSummary, project: selectedProject }
+      }, (createResp) => {
+        if (!createResp) {
+          showToast('No response from background while creating task.', true);
+          return;
+        }
+        if (!createResp.success) {
+          showToast(`Error: ${createResp.error}`, true);
+          return;
+        }
+        showToast('Task created successfully in Timetracker!', false);
+        // If logTime is checked, fetch the full task object and create the worklog.
+        if (logTime) {
           console.log('CONTENT: Fetching full task via findByName...');
           chrome.runtime.sendMessage({
             action: 'FIND_TASK_BY_NAME',
             payload: { taskName, personId: user.id }
           }, (findResp) => {
-            if (!findResp) { showToast('No response from background for findByName.', true); return; }
-            if (!findResp.success) { showToast(`Error: ${findResp.error}`, true); return; }
+            if (!findResp) {
+              showToast('No response from background for findByName.', true);
+              return;
+            }
+            if (!findResp.success) {
+              showToast(`Error: ${findResp.error}`, true);
+              return;
+            }
             const tasksFound = findResp.data;
             if (!tasksFound || tasksFound.length === 0) {
               showToast('Newly created task not found by name?!', true);
@@ -382,9 +421,14 @@
               else { showToast(`Error: ${wlResp.error}`, true); }
             });
           });
-        });
-      }
+        } else {
+          overlay.remove();
+        }
+      });
     });
+
+    document.body.appendChild(overlay);
+    timetrackerModalContainer = overlay;
   }
 
   // ------------------------------------------------------------------------
