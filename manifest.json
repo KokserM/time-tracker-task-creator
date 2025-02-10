@@ -1,7 +1,7 @@
 {
   "name": "Timetracker Task Creator",
   "description": "Create Timetracker tasks directly from Jira issues, prompting for credentials if token is invalid.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "manifest_version": 3,
   "web_accessible_resources": [
     {
