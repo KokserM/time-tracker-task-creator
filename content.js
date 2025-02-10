@@ -66,7 +66,7 @@
   }
 
   // ------------------------------------------------------------------------
-  // 3) Modal for login if needed (unchanged)
+  // 3) Modal for login if needed
   // ------------------------------------------------------------------------
   const createLoginModal = () => {
     const modalOverlay = document.createElement('div');
@@ -432,7 +432,7 @@
   }
 
   // ------------------------------------------------------------------------
-  // 5) Inject "Create Timetracker Task" Button into Jira (unchanged)
+  // 5) Inject "Create Timetracker Task" Button into Jira
   // ------------------------------------------------------------------------
   const issueKeyElement = document.querySelector('#key-val');
   const issueSummaryElement = document.querySelector('#summary-val');
@@ -461,7 +461,7 @@
   opsbarTransitions.appendChild(createTaskButton);
 
   // ------------------------------------------------------------------------
-  // 6) Handle "Create Timetracker Task" Button Click (unchanged)
+  // 6) Handle "Create Timetracker Task" Button Click
   // ------------------------------------------------------------------------
   createTaskButton.addEventListener('click', (e) => {
     e.preventDefault();
