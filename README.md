@@ -42,13 +42,30 @@
    - Enter your Timetracker credentials and click `Log In`.
    - After successful authentication, the extension stores your token and the next click will display the projects dropdown.
    
-4. **Select a Project & Create a Task:**
+4. **Create a Task and log work:**
 
    - Choose a project from the dropdown
    - Select date for worklog creation
+   - Select time spent on the task
+   - Check the `Log time with task` checkbox (default: checked)
    - and click `Create Task / Log Time`.
-   - 
-   - A toast notification will appear to confirm the task creation or display an error message.
+   - A toast notification will appear to confirm the task and worklog creation or display an error message.
+
+5. **Creating a task without logging work:**
+
+    - Choose a project from the dropdown
+    - Uncheck the `Log time with task` checkbox (default: checked)
+    - and click `Create Task / Log Time`.
+    - A toast notification will appear to confirm the task creation or display an error message.
+
+5. **Task already created:**
+
+    - Project selection is greyed out
+    - Check `Log time with task` checkbox (default: checked)
+    - Select date for worklog creation
+    - Select time spent on the task
+    - and click `Create Task / Log Time`.
+    - A toast notification will appear to confirm the worklog creation or display an error message.
 
 ## Configuration
 - API endpoints:
